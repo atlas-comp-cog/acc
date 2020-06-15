@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: acc 0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-03-21 08:56+0100\n"
+"POT-Creation-Date: 2020-06-15 10:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,5 +47,21 @@ msgstr ""
 
 #: acc/__init__.py:14
 msgid "Parameters"
+msgstr ""
+
+#: acc/__init__.py:15
+msgid "Value"
+msgstr ""
+
+#: acc/__init__.py:16
+msgid "Values"
+msgstr ""
+
+#: acc/__init__.py:17
+msgid "ValueSet"
+msgstr ""
+
+#: acc/__init__.py:18
+msgid "ValueSets"
 msgstr ""
 

@@ -1,12 +1,27 @@
-import sys
-
-from clld.scripts.util import initializedb, Data, bibtex2source
+from clld.scripts.util import Data, bibtex2source
 from clld.db.meta import DBSession
 from clld.db.models import common
 from clld.lib.bibtex import EntryType
 
 import acc
 from acc import models
+
+COORDS = [
+    ('homosapiens', 84, 152),
+    ('panpaniscus', 81.5, 152),
+    ('pantroglodytes', 78, 152),
+    ('gorillagorilla', 73, 152),
+    ('pongoabelii', 67, 152),
+    ('pongopygmaeus', 67, 152),
+    ('pongospp', 67, 152),
+    ('macacafascicularis', 47, 152),
+    ('macacafuscata', 47, 152),
+    ('macacamulatta', 47, 152),
+    ('callithrixjacchus', -28, 152),
+    ('saimirisciureussaimiriboliviensi', -44, 152),
+    ('propithecusverreauxiverreauxi', -57, 152),
+    ('lemurcatta', -67, 152),
+]
 
 
 def main(args):
@@ -45,9 +60,7 @@ def main(args):
                 models.Review,
                 ex.contribution_id,
                 id=ex.contribution_id,
-                name=ex.contribution_name,
-                description=str(ex.source),
-                source=src,
+                name=ex.review_title,
             )
         ccid = (ex.contribution_id, ex.contributor_id)
         if ccid not in data['ContributionContributor']:
@@ -63,6 +76,8 @@ def main(args):
                 ex.parameter_id,
                 id=ex.parameter_id,
                 name=ex.parameter,
+                domain_name=ex.domain,
+                area=ex.area,
             )
         species = data['Species'].get(ex.species_id)
         if not species:
@@ -73,23 +88,28 @@ def main(args):
                 name=ex.species,
                 description=ex.species_latin,
             )
-        vs = data.add(
+        vsid = (species.id, contrib.id, param.id)
+        vs = data['ValueSet'].get(vsid)
+        if not vs:
+            vs = data.add(
+                common.ValueSet,
+                vsid,
+                id='-'.join(vsid),
+                language=species,
+                contribution=contrib,
+                parameter=param,
+            )
+        v = data.add(
             models.Experiment,
             ex.id,
             id=ex.id,
-            language=species,
-            contribution=contrib,
-            parameter=param,
-        )
-        DBSession.add(common.Value(
-            id=ex.id,
             valueset=vs,
-            name=ex.sample_size,
-        ))
-    for sid, lat, lon in [
-        ('gorillagorilla', 85, 170),
-        ('lemurcatta', -70, 170),
-    ]:
+            sample_size=ex.sample_size,
+            type=ex.type,
+            description=ex.source_abstract,
+        )
+        DBSession.add(models.ExperimentReference(source=src, value=v))
+    for sid, lat, lon in COORDS:
         data['Species'][sid].longitude = lon
         data['Species'][sid].latitude = lat
 
@@ -99,8 +119,3 @@ def prime_cache(args):
     This procedure should be separate from the db initialization, because
     it will have to be run periodically whenever data has been updated.
     """
-
-
-if __name__ == '__main__':  # pragma: no cover
-    initializedb(create=main, prime_cache=prime_cache)
-    sys.exit(0)

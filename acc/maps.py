@@ -6,7 +6,7 @@ def options(req):
         url_pattern=req.static_url('acc:static/map_tiles/') + '{z}/{x}/{y}.png',
         options={
             'minZoom': 0,
-            'maxZoom': 2,
+            'maxZoom': 1,
             'attribution': '',
             'worldCopyJump': False,
             'tms': True,

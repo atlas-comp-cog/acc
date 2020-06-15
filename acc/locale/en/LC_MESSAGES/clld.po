@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-03-21 08:56+0100\n"
+"POT-Creation-Date: 2020-06-15 10:46+0200\n"
 "PO-Revision-Date: 2020-03-21 08:54+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -28,11 +28,11 @@ msgstr "Species"
 
 #: acc/__init__.py:9
 msgid "Contribution"
-msgstr "Experiment"
+msgstr "Review"
 
 #: acc/__init__.py:10
 msgid "Contributions"
-msgstr "Experiments"
+msgstr "Reviews"
 
 #: acc/__init__.py:11
 msgid "Contributor"
@@ -49,4 +49,24 @@ msgstr "Cognitive ability"
 #: acc/__init__.py:14
 msgid "Parameters"
 msgstr "Cognitive abilities"
+
+#: acc/__init__.py:15
+msgid "Value"
+msgstr "Experiment"
+
+#: acc/__init__.py:16
+msgid "Values"
+msgstr "Experiments"
+
+#: acc/__init__.py:17
+#, fuzzy
+#| msgid "Values"
+msgid "ValueSet"
+msgstr "Experiment set"
+
+#: acc/__init__.py:18
+#, fuzzy
+#| msgid "Values"
+msgid "ValueSets"
+msgstr "Experiment sets"
 

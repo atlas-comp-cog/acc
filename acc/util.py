@@ -1,7 +1,17 @@
-"""
-This module will be available in templates as ``u``.
+from sqlalchemy.orm import joinedload
 
-This module is also used to lookup custom template context providers, i.e. functions
-following a special naming convention which are called to update the template context
-before rendering resource's detail or index views.
-"""
+from clld.db.meta import DBSession
+from clld.db.models import common
+
+
+def parameter_index_html(ctx=None, req=None, **kw):
+    res = []
+    for p in DBSession.query(common.Parameter).options(
+        joinedload(common.Parameter.valuesets).joinedload(common.ValueSet.values)
+    ):
+        res.append((
+            p,
+            len(set(vs.language for vs in p.valuesets)),
+            sum(len(vs.values) for vs in p.valuesets),
+        ))
+    return {'counts': res}
