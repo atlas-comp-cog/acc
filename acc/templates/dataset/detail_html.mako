@@ -12,7 +12,8 @@
 <h2>Welcome to the Atlas of Comparative Cognition</h2>
 
 <p class="lead">
-    The ACC is a site that is designed to illustrate what we know about animal minds, and also what we do not yet know.
+    The ACC is a major collaborative project that is designed to illustrate what we know about animal minds, and also 
+    what we do not yet know.
     Here you can find, for the topics within animal cognition that have so far been compiled by our team, lists of the 
     experiments conducted to date, along with graphic representations of which species, for any given ability, have 
     already been studied. For example, if you click on the 'cognitive ability' tab, you will be brought to a list of 
