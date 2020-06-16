@@ -17,10 +17,17 @@ COORDS = [
     ('macacafascicularis', 47, 152),
     ('macacafuscata', 47, 152),
     ('macacamulatta', 47, 152),
+
+    ('papiocynocephalusursinus', 11, 152),
+    ('papiopapio', 10, 152),
+    ('papioanubis', 9, 152),
+
     ('callithrixjacchus', -28, 152),
     ('saimirisciureussaimiriboliviensi', -44, 152),
     ('propithecusverreauxiverreauxi', -57, 152),
     ('lemurcatta', -67, 152),
+    ('eulemurfulvusrufus', -67, 152),
+    ('vuveciavuriegutuvuriegutu', -67, 152),
 ]
 
 

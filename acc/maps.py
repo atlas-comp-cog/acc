@@ -5,6 +5,7 @@ def options(req):
     return dict(tile_layer=dict(
         url_pattern=req.static_url('acc:static/map_tiles/') + '{z}/{x}/{y}.png',
         options={
+            'icons': 'custom',
             'minZoom': 0,
             'maxZoom': 1,
             'attribution': '',
@@ -15,14 +16,22 @@ def options(req):
         }))
 
 
-class TreeOfLife(Map):
+class ACCMapMixin:
     def get_options(self):
         return options(self.req)
 
+    def get_legends(self):
+        for l in ParameterMap.get_legends(self):
+            if l.name != 'iconsize':
+                yield l
 
-class CapacityMap(ParameterMap):
-    def get_options(self):
-        return options(self.req)
+
+class TreeOfLife(ACCMapMixin, Map):
+    pass
+
+
+class CapacityMap(ACCMapMixin, ParameterMap):
+    pass
 
 
 def includeme(config):

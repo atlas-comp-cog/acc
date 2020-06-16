@@ -1,9 +1,19 @@
 from clld.db.models.common import Language, Parameter, ValueSet
 from clld.db.util import get_distinct_values
-from clld.web.datatables.base import LinkCol, RefsCol, Col, DetailsRowLinkCol
+from clld.web.datatables.base import LinkCol, RefsCol, Col, DetailsRowLinkCol, LinkToMapCol
 from clld.web.datatables.value import Values, ValueNameCol
+from clld.web.datatables.language import Languages
 
 from acc import models
+
+
+class SpeciesTable(Languages):
+    def col_defs(self):
+        return [
+            LinkCol(self, 'name'),
+            Col(self, 'description', sTitle='Latin name'),
+            LinkToMapCol(self, 'm'),
+        ]
 
 
 class Experiments(Values):
@@ -65,4 +75,5 @@ class Experiments(Values):
 
 
 def includeme(config):
+    config.register_datatable('languages', SpeciesTable)
     config.register_datatable('values', Experiments)
