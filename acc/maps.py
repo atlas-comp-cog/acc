@@ -11,6 +11,7 @@ def options(req):
             'attribution': '',
             'worldCopyJump': False,
             'tms': True,
+            'sidebar': True,
             #'maxBounds': 'L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180))',
             #'maxBoundsViscosity': 1.0,
         }))

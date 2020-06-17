@@ -3,6 +3,12 @@
 <%! active_menu_item = "languages" %>
 <%block name="title">${_('Languages')}</%block>
 
+<%def name="sidebar()">
+    % if map_ or request.map:
+        ${(map_ or request.map).render()}
+    % endif
+</%def>
+
 <%block name="head">
     <script src="${req.static_url('acc:static/tree.jquery.js')}"></script>
     <link rel="stylesheet" href="${req.static_url('acc:static/jqtree.css')}"/>
@@ -14,11 +20,8 @@
     <div id="species-tree"></div>
 </div>
 
-##% if map_ or request.map:
-##${(map_ or request.map).render()}
-##% endif
-
 ${ctx.render()}
+
 
 <script>
     $(document).ready(function () {

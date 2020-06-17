@@ -28,11 +28,11 @@ msgstr "Species"
 
 #: acc/__init__.py:9
 msgid "Contribution"
-msgstr "Review"
+msgstr "Systematic review"
 
 #: acc/__init__.py:10
 msgid "Contributions"
-msgstr "Reviews"
+msgstr "Sytematic reviews"
 
 #: acc/__init__.py:11
 msgid "Contributor"
