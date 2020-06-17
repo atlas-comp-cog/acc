@@ -3,8 +3,21 @@ from clld.db.util import get_distinct_values
 from clld.web.datatables.base import LinkCol, RefsCol, Col, DetailsRowLinkCol, LinkToMapCol
 from clld.web.datatables.value import Values, ValueNameCol
 from clld.web.datatables.language import Languages
+from clld.web.util.htmllib import HTML
 
 from acc import models
+
+
+class GBIFLinkCol(Col):
+    __kw__ = dict(bSearchable=False, bSortable=False)
+
+    def format(self, item):
+        if not item.gbif_url:
+            return ''
+        return HTML.a(
+            HTML.img(width='20', src=self.dt.req.static_url('acc:static/gbif.png')),
+            item.gbif_name,
+            href=item.gbif_url)
 
 
 class SpeciesTable(Languages):
@@ -13,6 +26,7 @@ class SpeciesTable(Languages):
             LinkCol(self, 'name'),
             Col(self, 'description', sTitle='Latin name'),
             LinkToMapCol(self, 'm'),
+            GBIFLinkCol(self, 'gbif', sTitle='GBIF'),
         ]
 
 

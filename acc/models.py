@@ -20,6 +20,14 @@ from clld.db.models import common, HasSourceNotNullMixin
 @implementer(interfaces.ILanguage)
 class Species(CustomModelMixin, common.Language):
     pk = Column(Integer, ForeignKey('language.pk'), primary_key=True)
+    gbif_name = Column(Unicode)
+    gbif_url = Column(Unicode)
+    kingdom = Column(Unicode)
+    phylum = Column(Unicode)
+    klass = Column(Unicode)
+    order = Column(Unicode)
+    family = Column(Unicode)
+    genus = Column(Unicode)
 
 
 @implementer(interfaces.IParameter)

@@ -27,7 +27,7 @@ COORDS = [
     ('propithecusverreauxiverreauxi', -57, 152),
     ('lemurcatta', -67, 152),
     ('eulemurfulvusrufus', -67, 152),
-    ('vuveciavuriegutuvuriegutu', -67, 152),
+    ('vareciavariegatavariegata', -67, 152),
 ]
 
 
@@ -94,6 +94,14 @@ def main(args):
                 id=ex.species_id,
                 name=ex.species,
                 description=ex.species_latin,
+                gbif_name=ex.gbif.name,
+                gbif_url=ex.gbif.url,
+                kingdom=ex.gbif.classification.kingdom,
+                phylum=ex.gbif.classification.phylum,
+                klass=ex.gbif.classification.klass,
+                order=ex.gbif.classification.order,
+                family=ex.gbif.classification.family,
+                genus=ex.gbif.classification.genus,
             )
         vsid = (species.id, contrib.id, param.id)
         vs = data['ValueSet'].get(vsid)

@@ -1,1 +1,28 @@
+#species-tree {
+    margin-left: 1em;
+}
 
+li.jqtree-folder {
+    margin-left: 1em;
+}
+
+span.clf {
+    font-size: smaller;
+}
+
+span.jqtree-title {
+    width: 100%;
+}
+
+table.species-in-tree {
+    width: 100%;
+}
+
+table.species-in-tree td.name {
+    width: 20%;
+}
+
+table.species-in-tree td.bubble {
+    width: 5%;
+    text-align: center;
+}
