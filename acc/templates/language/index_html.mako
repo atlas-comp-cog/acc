@@ -3,11 +3,6 @@
 <%! active_menu_item = "languages" %>
 <%block name="title">${_('Languages')}</%block>
 
-<%def name="sidebar()">
-    % if map_ or request.map:
-        ${(map_ or request.map).render()}
-    % endif
-</%def>
 
 <%block name="head">
     <script src="${req.static_url('acc:static/tree.jquery.js')}"></script>
@@ -16,11 +11,40 @@
 
 <h2>${_('Languages')}</h2>
 
-<div class="well">
+        <ul class="nav nav-pills">
+            <li class="">
+                <a href="#tree-container">
+                    <img src="${req.static_url('acc:static/Tree_Icon.png')}"
+                         width="35">
+                    Tree
+                </a>
+            </li>
+            <li class="">
+                <a href="#map-container">
+                    <img src="${req.static_url('acc:static/Map_Icon.png')}"
+                         width="35">
+                    Map
+                </a>
+            </li>
+            <li class="">
+                <a href="#table-container">
+                    <img src="${req.static_url('acc:static/Table_Icon.png')}"
+                         width="35">
+                    Table
+                </a>
+            </li>
+        </ul>
+
+
+<div class="well" id="tree-container">
     <div id="species-tree"></div>
 </div>
 
-${ctx.render()}
+${(map_ or request.map).render()}
+
+<div id="table-container">
+    ${ctx.render()}
+</div>
 
 
 <script>
