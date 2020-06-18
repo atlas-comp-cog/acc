@@ -5,9 +5,9 @@
 
 
 <%block name="head">
-  <link href="//veg.github.io/phylotree.js/phylotree.css" rel="stylesheet">
   <script src="//d3js.org/d3.v3.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+  <link href="${req.static_url('acc:static/phylotree.css')}" rel="stylesheet">
   <script src="${req.static_url('acc:static/phylotree.js')}"></script>
 </%block>
 
