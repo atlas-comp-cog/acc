@@ -11,10 +11,15 @@
   <script src="${req.static_url('acc:static/phylotree.js')}"></script>
     <style>
         % for cls, (color, url) in colormap.items():
-            .node circle.${cls} {
+            circle.${cls} {
                 fill: ${color};
             }
         % endfor
+            % for cls, (color, url) in colormap2.items():
+                circle.${cls} {
+                    fill: ${color};
+                }
+            % endfor
     </style>
 </%block>
 
@@ -133,6 +138,21 @@ $(document).ready(function() {
 
         tree(d3.layout.newick_parser("${newick}"));
         tree.style_nodes(function(element, data) {
+            if (edgecolors.hasOwnProperty(data.name)) {
+               element.selectAll("circle").attr('class', data.name);
+               // can we replace the circle with a pie chart?
+                element.selectAll("circle").select(function () {
+                    d3.select(this.parentNode).insert('path')
+                            .attr('d', 'M6.0,6.0 L1.0,6.0 A5.0,5.0 0 0,1 7.5 1.2 L6.0,6.0')
+                            .attr('style', 'fill:#000000;stroke:#000000;')
+                            .attr('transform', 'rotate(90 6.0 6.0) translate(-6 6)');
+                    d3.select(this.parentNode).insert('path')
+                            .attr('d', 'M6.0,6.0 L7.5,1.2 A5.0,5.0 0 1,1 1.0 6.0 L6.0,6.0')
+                            .attr('style', 'fill:#FFFFFF;stroke:#000000;')
+                            .attr('transform', 'rotate(90 6.0 6.0) translate(-6 6)');
+                    d3.select(this).remove();
+                })
+            }
             if (node_data.hasOwnProperty(node_id(data))) {
                 var d = node_data[node_id(data)];
                 element.selectAll("circle").attr('class', 'bubble ' + d.family);
