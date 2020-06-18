@@ -61,13 +61,8 @@ $(document).ready(function() {
         var svg = d3.select("#tree_display");
         var node_data = ${node_data|n};
         var tree = d3.layout.phylotree()
-                .svg(svg).size(500, '100%')
+                .svg(svg).size(450, '100%')
                 .radial(true);
-        var a = svg.append('a').attr('href', '#').attr('id', 'mouseover-text-link');
-    a.append('text')
-    .attr('id', 'mouseover-text')
-    .attr('transform', 'translate(10, 10)').attr('fill', '#999')
-    .text('selected species');
 
         node_id = function(node) {
             for (key in node) {
@@ -83,6 +78,16 @@ $(document).ready(function() {
           return 10;
         };
 
+        var div = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+        close_tooltip = function() {
+            div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+        }
+
         tree.options({'draw-size-bubbles': true, 'zoom': true}).node_span(bubble_size);
 
         tree(d3.layout.newick_parser("${newick}"));
@@ -90,10 +95,18 @@ $(document).ready(function() {
             if (node_data.hasOwnProperty(node_id(data))) {
                 var d = node_data[node_id(data)];
                 element.on('mouseover', function () {
-                    d3.select('#mouseover-text-link').attr('href', CLLD.route_url('language', {'id': d.id}));
-                    d3.select('#mouseover-text').attr('fill', 'black').attr('text-decoration', 'underline')
-                            .text(d.gbif_name + ': ' + d.experiments + ' experiments');
-                });
+
+            div.transition()
+                .duration(200)
+                .style("opacity", .95);
+            div	.html(
+                '<button type="button" class="close" onclick="close_tooltip()">&times;</button>' +
+                '<strong><a href="' + CLLD.route_url('language', {'id': d.id}) + '">' + d.name + '</a></strong><br/>' +
+                '<em>' + d.gbif_name + '</em><br/>' +
+                d.experiments + ' experiments')
+                .style("left", (d3.event.pageX) + "px")
+                .style("top", (d3.event.pageY - 28) + "px");
+            });
             }
         });
 
@@ -102,7 +115,6 @@ $(document).ready(function() {
         $("#layout").on("click", function(e) {
             tree.radial($(this).prop("checked")).placenodes().update();
         });
-
 
 
         var data = ${tree|n};
