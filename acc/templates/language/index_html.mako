@@ -5,10 +5,6 @@
 
 
 <%block name="head">
-    <script src="${req.static_url('acc:static/tree.jquery.js')}"></script>
-    <link rel="stylesheet" href="${req.static_url('acc:static/jqtree.css')}"/>
-
-
   <link href="//veg.github.io/phylotree.js/phylotree.css" rel="stylesheet">
   <script src="//d3js.org/d3.v3.min.js"></script>
   <script src="${req.static_url('acc:static/phylotree.js')}"></script>
