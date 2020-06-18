@@ -9,6 +9,13 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
   <link href="${req.static_url('acc:static/phylotree.css')}" rel="stylesheet">
   <script src="${req.static_url('acc:static/phylotree.js')}"></script>
+    <style>
+        % for cls, (color, url) in colormap.items():
+            .node circle.${cls} {
+                fill: ${color};
+            }
+        % endfor
+    </style>
 </%block>
 
 <h2>${_('Languages')}</h2>
@@ -32,7 +39,41 @@
     </ul>
     <div class="tab-content" style="overflow: visible;">
         <div id="radial" class="tab-pane active">
-            <svg id="tree_display">
+            <div style="float: left; width: 20%">
+                <table class="table table-condensed table-nonfluid" style="float: left;">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Class</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    % for cls, (color, url) in colormap2.items():
+                    <tr>
+                        <td style="color: ${color}; font-weight: bold">─</td>
+                        <td>${cls}</td>
+                    </tr>
+                    % endfor
+                    </tbody>
+                </table>
+                <table class="table table-condensed table-nonfluid" style="float: left;">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Family</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        % for cls, (color, url) in colormap.items():
+                            <tr>
+                                <td><img width="20" src="${url}"/></td>
+                                <td>${cls}</td>
+                            </tr>
+                        % endfor
+                    </tbody>
+                </table>
+            </div>
+            <svg id="tree_display" style="width: 60%">
             </svg>
         </div>
         <div id="tree" class="tab-pane">
@@ -55,14 +96,14 @@ $(document).ready(function() {
 </div>
 
 
-
 <script>
     $(document).ready(function () {
         var svg = d3.select("#tree_display");
         var node_data = ${node_data|n};
         var tree = d3.layout.phylotree()
-                .svg(svg).size(450, '100%')
+                .svg(svg).size(450, '75%')
                 .radial(true);
+        var edgecolors = ${edgecolors|n};
 
         node_id = function(node) {
             for (key in node) {
@@ -94,6 +135,8 @@ $(document).ready(function() {
         tree.style_nodes(function(element, data) {
             if (node_data.hasOwnProperty(node_id(data))) {
                 var d = node_data[node_id(data)];
+                element.selectAll("circle").attr('class', 'bubble ' + d.family);
+
                 element.on('mouseover', function () {
 
             div.transition()
@@ -108,7 +151,14 @@ $(document).ready(function() {
                 .style("top", (d3.event.pageY - 28) + "px");
             });
             }
-        });
+        })
+        .style_edges(
+           function(dom_element, edge_object) {
+        if (edgecolors.hasOwnProperty(edge_object.source.name)) {
+          dom_element.style("stroke", edgecolors[edge_object.source.name]);
+        }
+      }
+        );
 
         tree.layout();
 

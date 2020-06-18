@@ -1,7 +1,9 @@
 import json
 import math
 import itertools
+import collections
 
+from clldutils import color
 from clldutils import svg
 from sqlalchemy.orm import joinedload
 import newick
@@ -23,6 +25,7 @@ def species_node(s, req):
         'gbif_logo': req.static_url('acc:static/gbif.png'),
         'gbif_url': s.gbif_url,
         'gbif_name': s.gbif_name,
+        'family': s.family,
     }
 
 
@@ -30,6 +33,8 @@ def language_index_html(ctx=None, req=None, **kw):
     node_data = {}
     tree = []
     ntrees = []
+    colormap = collections.Counter()
+    colormap2 = collections.Counter()
     species = DBSession.query(Species).order_by(
         Species.kingdom, Species.phylum, Species.klass, Species.order, Species.family, Species.genus
     )
@@ -41,16 +46,18 @@ def language_index_html(ctx=None, req=None, **kw):
             node2 = newick.Node()
             for klass, items3 in itertools.groupby(items2, lambda s: s.klass):
                 n3 = {'name': 'Class: ' + klass, 'children': []}
-                node3 = newick.Node()
+                node3 = newick.Node(klass)
                 for order, items4 in itertools.groupby(items3, lambda s: s.order):
                     n4 = {'name': 'Order: ' + order, 'children': []}
-                    node4 = newick.Node()
+                    node4 = newick.Node(klass)
                     for family, items5 in itertools.groupby(items4, lambda s: s.family):
                         n5 = {'name': 'Family: ' + family, 'children': []}
-                        node5 = newick.Node()
+                        node5 = newick.Node(klass)
                         for genus, items6 in itertools.groupby(items5, lambda s: s.genus):
                             items6 = list(items6)
-                            node6 = newick.Node.create(descendants=[
+                            colormap.update([s.family for s in items6])
+                            colormap2.update([s.klass for s in items6])
+                            node6 = newick.Node.create(name=klass, descendants=[
                                 newick.Node('%s{__id__%s}' % (s.name.replace(' ', '_'), s.id)) for s in items6
                             ])
                             node_data.update({s.id: species_node(s, req) for s in items6})
@@ -68,7 +75,19 @@ def language_index_html(ctx=None, req=None, **kw):
             node1.add_descendant(node2)
         ntrees.append(node1)
         tree.append(n1)
-    return dict(tree=json.dumps(tree), newick=newick.dumps(ntrees), node_data=json.dumps(node_data))
+
+    res = dict(
+        tree=json.dumps(tree),
+        newick=newick.dumps(ntrees),
+        colormap={
+            k[0]: (v, svg.data_url(svg.icon(v.replace('#', 'c'))))
+            for k, v in zip(colormap.most_common(), color.qualitative_colors(len(colormap)))},
+        colormap2={
+            k[0]: (v, svg.data_url(svg.icon(v.replace('#', 's'))))
+            for k, v in zip(colormap2.most_common(), color.qualitative_colors(len(colormap), set='tol'))},
+        node_data=json.dumps(node_data))
+    res['edgecolors'] = json.dumps({k: v[0] for k, v in res['colormap2'].items()})
+    return res
 
 
 def parameter_index_html(ctx=None, req=None, **kw):

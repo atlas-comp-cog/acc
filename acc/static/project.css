@@ -37,3 +37,7 @@ div.tooltip {
     border: 1px solid black;
     border-radius: 8px;
 }
+
+.node circle.bubble {
+    opacity: 0.7;
+}
