@@ -1,3 +1,5 @@
+import hashlib
+
 from clld.scripts.util import Data, bibtex2source
 from clld.db.meta import DBSession
 from clld.db.models import common
@@ -29,6 +31,10 @@ COORDS = [
     ('eulemurfulvusrufus', -67, 152),
     ('vareciavariegatavariegata', -67, 152),
 ]
+
+
+def hashed_id(s):
+    return hashlib.md5(s.encode('utf8')).hexdigest()[:7]
 
 
 def main(args):
@@ -66,7 +72,7 @@ def main(args):
             contrib = data.add(
                 models.Review,
                 ex.contribution_id,
-                id=ex.contribution_id,
+                id=hashed_id(ex.contribution_id),
                 name=ex.review_title,
             )
         ccid = (ex.contribution_id, ex.contributor_id)
@@ -117,7 +123,7 @@ def main(args):
         v = data.add(
             models.Experiment,
             ex.id,
-            id=ex.id,
+            id=hashed_id(ex.id),
             valueset=vs,
             sample_size=ex.sample_size,
             type=ex.type,
