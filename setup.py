@@ -23,6 +23,7 @@ setup(
         'clld>=6',
         'clldmpg>=3.5',
         'sqlalchemy',
+        'newick',
         'waitress',
     ],
     extras_require={

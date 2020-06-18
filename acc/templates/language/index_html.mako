@@ -9,10 +9,10 @@
     <link rel="stylesheet" href="${req.static_url('acc:static/jqtree.css')}"/>
 
 
-  <link href="http://veg.github.io/phylotree.js/phylotree.css" rel="stylesheet">
-  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <link href="//veg.github.io/phylotree.js/phylotree.css" rel="stylesheet">
+  <script src="//d3js.org/d3.v3.min.js"></script>
   <script src="${req.static_url('acc:static/phylotree.js')}"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 
 </%block>
 
