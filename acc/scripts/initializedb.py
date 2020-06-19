@@ -1,5 +1,6 @@
 import hashlib
 
+from sqlalchemy.orm import joinedload
 from clldutils import jsonlib
 from clld.scripts.util import Data, bibtex2source
 from clld.db.meta import DBSession
@@ -142,3 +143,7 @@ def prime_cache(args):
     This procedure should be separate from the db initialization, because
     it will have to be run periodically whenever data has been updated.
     """
+    for s in DBSession.query(common.Language).options(
+            joinedload(common.Language.valuesets).joinedload(common.ValueSet.values)
+    ):
+        s.count_experiments = sum(len(vs.values) for vs in s.valuesets)

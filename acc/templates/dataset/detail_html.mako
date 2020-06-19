@@ -2,10 +2,7 @@
 
 <%def name="sidebar()">
     <div class="well">
-        <h3>Sidebar</h3>
-        <p>
-            Content
-        </p>
+    <img class="img-polaroid" src="${req.static_url('acc:static/acc.png')}"/>
     </div>
 </%def>
 

@@ -9,8 +9,6 @@ from acc import models
 
 
 class GBIFLinkCol(Col):
-    __kw__ = dict(bSearchable=False, bSortable=False)
-
     def format(self, item):
         if not item.gbif_url:
             return ''
@@ -24,9 +22,12 @@ class SpeciesTable(Languages):
     def col_defs(self):
         return [
             LinkCol(self, 'name'),
-            Col(self, 'description', sTitle='Latin name'),
-            LinkToMapCol(self, 'm'),
-            GBIFLinkCol(self, 'gbif', sTitle='GBIF'),
+            Col(self, 'experiments', model_col=models.Species.count_experiments, input_size='mini'),
+            GBIFLinkCol(self, 'gbif', sTitle='GBIF', model_col=models.Species.gbif_name),
+            Col(self, 'class', model_col=models.Species.klass, choices=get_distinct_values(models.Species.klass)),
+            Col(self, 'order', model_col=models.Species.order, choices=get_distinct_values(models.Species.order)),
+            Col(self, 'family', model_col=models.Species.family, choices=get_distinct_values(models.Species.family)),
+            Col(self, 'genus', model_col=models.Species.genus, choices=get_distinct_values(models.Species.genus)),
         ]
 
 

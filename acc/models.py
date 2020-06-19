@@ -28,6 +28,7 @@ class Species(CustomModelMixin, common.Language):
     order = Column(Unicode)
     family = Column(Unicode)
     genus = Column(Unicode)
+    count_experiments = Column(Integer)
 
 
 @implementer(interfaces.IParameter)
