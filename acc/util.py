@@ -2,6 +2,7 @@ import json
 import math
 import itertools
 import collections
+from xml.etree import ElementTree as et
 
 from clldutils import color
 from clldutils import svg
@@ -12,6 +13,15 @@ from clld.db.meta import DBSession
 from clld.db.models import common
 
 from acc.models import Species
+
+
+def iter_pie_paths(*chunks):
+    xml = et.fromstring(svg.pie(chunks, ('#000', '#fff'), width=12))
+    for path in xml.findall('.//{http://www.w3.org/2000/svg}path'):
+        res = {k: v for k, v in path.attrib.items()}
+        res['style'] = res['style'].replace('none', '#000')
+        res['transform'] += ' translate(-6 6)'
+        yield res
 
 
 def species_node(s, req):
@@ -29,6 +39,15 @@ def species_node(s, req):
     }
 
 
+def coverage_data(req, nid, rank, subranks):
+    in_, total = req.dataset.jsondata['gbif_coverage'][nid]
+    return dict(
+        tooltip='<p><strong>{} {}</strong><br/>{} of {} {}</p>'.format(
+            rank, nid.split('_')[-1], in_, total, subranks),
+        paths=list(iter_pie_paths(in_, total - in_))
+    )
+
+
 def language_index_html(ctx=None, req=None, **kw):
     node_data = {}
     tree = []
@@ -42,22 +61,37 @@ def language_index_html(ctx=None, req=None, **kw):
         n1 = {'name': 'Kingdom: ' + kingdom, 'children': []}
         node1 = newick.Node()
         for phylum, items2 in itertools.groupby(items1, lambda s: s.phylum):
+            nid = '_'.join((phylum,))
+            node_data[nid] = coverage_data(req, nid, 'Phylum', 'classes')
+
             n2 = {'name': 'Phylum: ' + phylum, 'children': []}
-            node2 = newick.Node()
+            node2 = newick.Node(nid)
             for klass, items3 in itertools.groupby(items2, lambda s: s.klass):
+                nid = '_'.join((phylum, klass))
+                node_data[nid] = coverage_data(req, nid, 'Class', 'orders')
+
                 n3 = {'name': 'Class: ' + klass, 'children': []}
-                node3 = newick.Node(klass)
+                node3 = newick.Node(nid)
                 for order, items4 in itertools.groupby(items3, lambda s: s.order):
+                    nid = '_'.join((phylum, klass, order))
+                    node_data[nid] = coverage_data(req, nid, 'Order', 'families')
+
                     n4 = {'name': 'Order: ' + order, 'children': []}
-                    node4 = newick.Node(klass)
+                    node4 = newick.Node(nid)
                     for family, items5 in itertools.groupby(items4, lambda s: s.family):
+                        nid = '_'.join((phylum, klass, order, family))
+                        node_data[nid] = coverage_data(req, nid, 'Family', 'genera')
+
                         n5 = {'name': 'Family: ' + family, 'children': []}
-                        node5 = newick.Node(klass)
+                        node5 = newick.Node(nid)
                         for genus, items6 in itertools.groupby(items5, lambda s: s.genus):
+                            nid = '_'.join((phylum, klass, order, family, genus))
+                            node_data[nid] = coverage_data(req, nid, 'Genus', 'species')
+
                             items6 = list(items6)
                             colormap.update([s.family for s in items6])
                             colormap2.update([s.klass for s in items6])
-                            node6 = newick.Node.create(name=klass, descendants=[
+                            node6 = newick.Node.create(name=nid, descendants=[
                                 newick.Node('%s{__id__%s}' % (s.name.replace(' ', '_'), s.id)) for s in items6
                             ])
                             node_data.update({s.id: species_node(s, req) for s in items6})

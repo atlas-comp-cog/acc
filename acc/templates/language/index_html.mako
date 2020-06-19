@@ -106,7 +106,7 @@ $(document).ready(function() {
         var svg = d3.select("#tree_display");
         var node_data = ${node_data|n};
         var tree = d3.layout.phylotree()
-                .svg(svg).size(450, '75%')
+                .svg(svg).size(450, '75%').spacing_x(20, true).spacing_y(20, true)
                 .radial(true);
         var edgecolors = ${edgecolors|n};
 
@@ -138,20 +138,46 @@ $(document).ready(function() {
 
         tree(d3.layout.newick_parser("${newick}"));
         tree.style_nodes(function(element, data) {
-            if (edgecolors.hasOwnProperty(data.name)) {
-               element.selectAll("circle").attr('class', data.name);
+            if (node_data.hasOwnProperty(data.name)) {
+               //element.selectAll("circle").attr('class', data.name.replace('_', ' '));
                // can we replace the circle with a pie chart?
                 element.selectAll("circle").select(function () {
-                    d3.select(this.parentNode).insert('path')
-                            .attr('d', 'M6.0,6.0 L1.0,6.0 A5.0,5.0 0 0,1 7.5 1.2 L6.0,6.0')
-                            .attr('style', 'fill:#000000;stroke:#000000;')
-                            .attr('transform', 'rotate(90 6.0 6.0) translate(-6 6)');
-                    d3.select(this.parentNode).insert('path')
-                            .attr('d', 'M6.0,6.0 L7.5,1.2 A5.0,5.0 0 1,1 1.0 6.0 L6.0,6.0')
-                            .attr('style', 'fill:#FFFFFF;stroke:#000000;')
-                            .attr('transform', 'rotate(90 6.0 6.0) translate(-6 6)');
+                    var j, path, paths = node_data[data.name]['paths'];
+                    if (paths.length == 0) {
+                        d3.select(this.parentNode).insert('circle')
+                        .attr('cx', 6).attr('cy', 6).attr('r', 5).attr('style', 'stroke:#000; fill:#000;')
+                                .attr('transform', 'translate(-6 -6)')
+                       .on("click", function () {
+                                tree.handle_node_click(data);
+                            });
+                    } else {
+                        for (j=0; j<paths.length; j++) {
+                            path = d3.select(this.parentNode).insert('path');
+                            for (attr in paths[j]) {
+                                if (paths[j].hasOwnProperty(attr)) {
+                                    path.attr(attr, paths[j][attr]);
+                                }
+                            }
+                            path.on("click", function () {
+                                tree.handle_node_click(data);
+                            });
+                        }
+                    }
                     d3.select(this).remove();
                 })
+                element.on('mouseover', function () {
+                    div.transition()
+                            .duration(200)
+                            .style("opacity", .95);
+                    div	.html(node_data[data.name].tooltip)
+                            .style("left", (d3.event.pageX) + "px")
+                            .style("top", (d3.event.pageY - 28) + "px");
+                });
+                element.on('mouseout', function () {
+                    div.transition()
+                            .duration(500)
+                            .style("opacity", 0);
+                });
             }
             if (node_data.hasOwnProperty(node_id(data))) {
                 var d = node_data[node_id(data)];
@@ -174,9 +200,13 @@ $(document).ready(function() {
         })
         .style_edges(
            function(dom_element, edge_object) {
-        if (edgecolors.hasOwnProperty(edge_object.source.name)) {
-          dom_element.style("stroke", edgecolors[edge_object.source.name]);
-        }
+               var i, taxa = edge_object.source.name.split('_');
+               for (i=0; i<taxa.length;i++) {
+                   if (edgecolors.hasOwnProperty(taxa[i])) {
+                       dom_element.style("stroke", edgecolors[taxa[i]]);
+                       return;
+                   }
+               }
       }
         );
 

@@ -1,5 +1,6 @@
 import hashlib
 
+from clldutils import jsonlib
 from clld.scripts.util import Data, bibtex2source
 from clld.db.meta import DBSession
 from clld.db.models import common
@@ -49,6 +50,7 @@ def main(args):
         license="http://creativecommons.org/licenses/by/4.0/",
         domain='acc.clld.org',
         jsondata={
+            'gbif_coverage': jsonlib.load(args.api.path('gbif_coverage.json')),
             'license_icon': 'cc-by.png',
             'license_name': 'Creative Commons Attribution 4.0 International License'})
 
