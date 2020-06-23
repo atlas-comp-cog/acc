@@ -1,11 +1,12 @@
-import json
 import math
+from string import ascii_lowercase
 import itertools
 import collections
 from xml.etree import ElementTree as et
 
 from clldutils import color
 from clldutils import svg
+from sqlalchemy import desc
 from sqlalchemy.orm import joinedload
 import newick
 
@@ -67,11 +68,18 @@ def tree_data(req, species_query, experiment_count=lambda s: s.count_experiments
     colormap2 = collections.Counter()
     count_leafs = species_query.count()
     species = species_query.order_by(
-        Species.kingdom, Species.phylum, Species.klass, Species.order, Species.family, Species.genus
+        Species.kingdom,
+        Species.phylum_sortkey,
+        Species.klass_sortkey,
+        Species.order_sortkey,
+        Species.family_sortkey,
+        Species.genus_sortkey,
+        Species.sortkey
     ).options(joinedload(common.Language.valuesets).joinedload(common.ValueSet.values))
     coverage = {}
     nodes = []
 
+    ngenus = 0
     for kingdom, items1 in itertools.groupby(species, lambda s: s.kingdom):
         node1 = newick.Node()
         for phylum, items2 in itertools.groupby(items1, lambda s: s.phylum):
@@ -79,7 +87,6 @@ def tree_data(req, species_query, experiment_count=lambda s: s.count_experiments
             nodes.append((nid, 'Phylum', 'classes'))
             if phylum not in coverage:
                 coverage[phylum] = {}
-            #node_data[nid] = coverage_data(req, nid, 'Phylum', 'classes')
 
             node2 = newick.Node(nid)
             for klass, items3 in itertools.groupby(items2, lambda s: s.klass):
@@ -87,7 +94,6 @@ def tree_data(req, species_query, experiment_count=lambda s: s.count_experiments
                 nodes.append((nid, 'Class', 'orders'))
                 if klass not in coverage[phylum]:
                     coverage[phylum][klass] = {}
-                #node_data[nid] = coverage_data(req, nid, 'Class', 'orders')
 
                 node3 = newick.Node(nid)
                 for order, items4 in itertools.groupby(items3, lambda s: s.order):
@@ -95,7 +101,6 @@ def tree_data(req, species_query, experiment_count=lambda s: s.count_experiments
                     nodes.append((nid, 'Order', 'families'))
                     if order not in coverage[phylum][klass]:
                         coverage[phylum][klass][order] = {}
-                    #node_data[nid] = coverage_data(req, nid, 'Order', 'families')
 
                     node4 = newick.Node(nid)
                     for family, items5 in itertools.groupby(items4, lambda s: s.family):
@@ -103,13 +108,12 @@ def tree_data(req, species_query, experiment_count=lambda s: s.count_experiments
                         nodes.append((nid, 'Family', 'genera'))
                         if family not in coverage[phylum][klass][order]:
                             coverage[phylum][klass][order][family] = {}
-                        #node_data[nid] = coverage_data(req, nid, 'Family', 'genera')
 
                         node5 = newick.Node(nid)
                         for genus, items6 in itertools.groupby(items5, lambda s: s.genus):
+                            ngenus += 1
                             nid = '_'.join((phylum, klass, order, family, genus))
                             nodes.append((nid, 'Genus', 'species'))
-                            #node_data[nid] = coverage_data(req, nid, 'Genus', 'species')
 
                             items6 = list(items6)
                             coverage[phylum][klass][order][family][genus] = len(items6)

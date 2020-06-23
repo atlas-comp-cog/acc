@@ -1,21 +1,14 @@
-CLLD.MapIcons.custom = function (feature, size, url) {
-    size = 30;
-    return L.icon({
-        iconUrl: url == undefined ? feature.properties.icon : url,
-        iconSize: [size, size],
-        iconAnchor: [Math.floor(size / 2), Math.floor(size / 2)],
-        popupAnchor: [0, 0],
-        className: feature.properties['class'] == undefined ? 'clld-map-icon' : feature.properties['class']
-    });
-};
-
-CLLD.mapResizeIcons = function (eid, size) {
-};
-
 ACC = {};
 
+ACC.close_tooltip = function () {
+    d3.select('div.tooltip')
+        .transition()
+        .duration(500)
+        .style("opacity", 0);
+}
+
 ACC.Tree = (function () {
-    node_id = function (node) {
+    let node_id = function (node) {
         for (key in node) {
             if (node.hasOwnProperty(key) && key.indexOf('__id__') == 0) {
                 return key.split('__id__')[1];
@@ -23,7 +16,7 @@ ACC.Tree = (function () {
         }
     };
 
-    bubble_size = function (data, node_data) {
+    let bubble_size = function (data, node_data) {
         var nid = node_id(data);
         if (nid && node_data.hasOwnProperty(node_id(data))) {
             return node_data[node_id(data)]['bubble_size'] / 3.0;
@@ -31,14 +24,7 @@ ACC.Tree = (function () {
         return 10;
     };
 
-    close_tooltip = function () {
-        d3.select('div.tooltip')
-            .transition()
-            .duration(500)
-            .style("opacity", 0);
-    }
-
-    spacing = function(nleafs) {
+    spacing = function (nleafs) {
         if (nleafs < 10) {
             return 60;
         }
@@ -50,15 +36,15 @@ ACC.Tree = (function () {
 
     return {
         init: function (eid, node_data, edgecolors, newick, count_leafs) {
-            var svg = d3.select("#" + eid);
-            var tree = d3.layout.phylotree()
-                // FIXME: options.spacing! options.bubble_scale!
-                .svg(svg).size(450, '75%').spacing_x(spacing(count_leafs), true).spacing_y(spacing(count_leafs), true)
-                .radial(true);
-
-            var div = d3.select("body").append("div")
-                .attr("class", "tooltip")
-                .style("opacity", 0);
+            var svg = d3.select("#" + eid),
+                tree = d3.layout.phylotree()
+                    .svg(svg).size(450, '75%')
+                    .spacing_x(spacing(count_leafs), true)
+                    .spacing_y(spacing(count_leafs), true)
+                    .radial(true),
+                div = d3.select("body").append("div")
+                    .attr("class", "tooltip")
+                    .style("opacity", 0);
 
             tree.options({'draw-size-bubbles': true, 'zoom': true})
                 .node_span(function (data) {
@@ -67,12 +53,16 @@ ACC.Tree = (function () {
 
             tree(d3.layout.newick_parser(newick));
             tree.style_nodes(function (element, data) {
+                var j, path, paths;
                 if (node_data.hasOwnProperty(data.name)) {
                     element.selectAll("circle").select(function () {
-                        var j, path, paths = node_data[data.name]['paths'];
-                        if (paths.length == 0) {
+                        paths = node_data[data.name]['paths'];
+                        if (paths.length === 0) {
                             d3.select(this.parentNode).insert('circle')
-                                .attr('cx', 6).attr('cy', 6).attr('r', 5).attr('style', 'stroke:#000; fill:#000;')
+                                .attr('cx', 6)
+                                .attr('cy', 6)
+                                .attr('r', 5)
+                                .attr('style', 'stroke:#000; fill:#000;')
                                 .attr('transform', 'translate(-6 -6)')
                                 .on("click", function () {
                                     tree.handle_node_click(data);
@@ -116,8 +106,9 @@ ACC.Tree = (function () {
                             .duration(200)
                             .style("opacity", .95);
                         div.html(
-                            '<button type="button" class="close" onclick="close_tooltip()">&times;</button>' +
-                            '<strong><a href="' + CLLD.route_url('language', {'id': d.id}) + '">' + d.name + '</a></strong><br/>' +
+                            '<button type="button" class="close" onclick="ACC.close_tooltip()">&times;</button>' +
+                            '<strong><a href="' + CLLD.route_url('language', {'id': d.id}) + '">' +
+                            d.name + '</a></strong><br/>' +
                             '<em>' + d.gbif_name + '</em><br/>' +
                             d.experiments + ' experiments')
                             .style("left", (d3.event.pageX) + "px")

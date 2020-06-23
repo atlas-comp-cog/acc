@@ -28,6 +28,12 @@ class Species(CustomModelMixin, common.Language):
     order = Column(Unicode)
     family = Column(Unicode)
     genus = Column(Unicode)
+    phylum_sortkey = Column(Unicode)
+    klass_sortkey = Column(Unicode)
+    order_sortkey = Column(Unicode)
+    family_sortkey = Column(Unicode)
+    genus_sortkey = Column(Unicode)
+    sortkey = Column(Unicode)
     count_experiments = Column(Integer)
 
 

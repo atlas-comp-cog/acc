@@ -41,6 +41,7 @@ def hashed_id(s):
 
 def main(args):
     data = Data()
+    sortkeys = jsonlib.load(args.api.path('taxa_sortkeys.json'))
 
     dataset = common.Dataset(
         id=acc.__name__,
@@ -112,6 +113,10 @@ def main(args):
                 family=ex.gbif.classification.family,
                 genus=ex.gbif.classification.genus,
             )
+            ranks = ['phylum', 'klass', 'order', 'family', 'genus']
+            for j, rank in enumerate(ranks):
+                setattr(species, rank + '_sortkey', sortkeys['_'.join(getattr(species, r) for r in ranks[:j + 1])])
+            species.sortkey = sortkeys[ex.gbif.cname.lower()]
         vsid = (species.id, contrib.id, param.id)
         vs = data['ValueSet'].get(vsid)
         if not vs:
