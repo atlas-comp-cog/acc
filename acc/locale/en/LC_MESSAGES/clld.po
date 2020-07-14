@@ -32,7 +32,7 @@ msgstr "Systematic review"
 
 #: acc/__init__.py:10
 msgid "Contributions"
-msgstr "Sytematic reviews"
+msgstr "Systematic reviews"
 
 #: acc/__init__.py:11
 msgid "Contributor"

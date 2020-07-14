@@ -2,6 +2,7 @@ import hashlib
 
 from sqlalchemy.orm import joinedload
 from clldutils import jsonlib
+from clldutils.misc import slug
 from clld.scripts.util import Data, bibtex2source
 from clld.db.meta import DBSession
 from clld.db.models import common
@@ -51,10 +52,21 @@ def main(args):
         publisher_url="http://www.eva.mpg.de",
         license="http://creativecommons.org/licenses/by/4.0/",
         domain='acc.clld.org',
+        contact='hanus@eva.mpg.de',
         jsondata={
             'gbif_coverage': jsonlib.load(args.api.path('gbif_coverage.json')),
             'license_icon': 'cc-by.png',
             'license_name': 'Creative Commons Attribution 4.0 International License'})
+
+    for i, name in enumerate(["Cathal O'Madagain", "Daniel Hanus"]):
+        first, last = name.split()
+        c = data.add(
+            common.Contributor,
+            last.lower(),
+            id=slug(last),
+            name=name,
+        )
+        common.Editor(dataset=dataset, contributor=c, ord=i)
 
     DBSession.add(dataset)
 
@@ -65,12 +77,14 @@ def main(args):
             src = data.add(common.Source, ex.source.id, _obj=bibtex2source(ex.source))
         contributor = data['Contributor'].get(ex.contributor_id)
         if not contributor:
-            contributor = data.add(
-                common.Contributor,
-                ex.contributor_id,
-                id=ex.contributor_id,
-                name=str(ex.reviewer),
-            )
+            contributor = data['Contributor'].get(ex.reviewer.last.lower())
+            if not contributor:
+                contributor = data.add(
+                    common.Contributor,
+                    ex.contributor_id,
+                    id=ex.contributor_id,
+                    name=str(ex.reviewer),
+                )
         contrib = data['Review'].get(ex.contribution_id)
         if not contrib:
             contrib = data.add(

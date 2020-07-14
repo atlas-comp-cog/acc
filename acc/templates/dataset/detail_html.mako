@@ -20,14 +20,19 @@
     
 </p>
 <p>
-    The site is based on data collected by an international team of contributors, and anyone can join this team if they
+    The site is based on data collected by an international
+    <a href="${req.route_url('contributors')}">team of contributors</a>,
+    and anyone can join this team if they
     are willing to put time into carrying out a systematic review of literature on a relevant topic in animal congition.
     The principles according to which the currently available data on any topic is identified follows the notion of the
     'systematic review'. This is a way to conduct what is traditionally called a literature review, but one that aims to 
-    ensure that the literature identified is not arbitrary or biased. The ACC team have created 'procedure' documents
-    designed to show you how to conduct this kind of review, which are available under the 'documents' tab of this site.
+    ensure that the literature identified is not arbitrary or biased. The
+    <a href="${req.route_url('about', _anchor='people')}">ACC team</a>
+    have created 'procedure' documents
+    designed to show you how to conduct this kind of review, which are available at
+    <a href="${req.route_url('about', _anchor='documents')}">About &gt; Documents</a> on this site.
     
-    If you would like to conduct a systematic review or a meta-analysis, please contact the editors at editors@acc.org 
-    with a topic and species you would like to work on. 
-    
+    If you would like to conduct a systematic review or a meta-analysis, please
+    <a href="${req.route_url('contact')}">contact the editors</a>
+    with a topic and species you would like to work on.
 </p>
