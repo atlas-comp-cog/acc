@@ -3,7 +3,7 @@ import hashlib
 from sqlalchemy.orm import joinedload
 from clldutils import jsonlib
 from clldutils.misc import slug
-from clld.scripts.util import Data, bibtex2source
+from clld.cliutil import Data, bibtex2source
 from clld.db.meta import DBSession
 from clld.db.models import common
 from clld.lib.bibtex import EntryType
